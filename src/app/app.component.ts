@@ -19,4 +19,8 @@ export class AppComponent {
     {text: 'Card 9'},
     {text: 'Card 10'}
   ];
+
+  public addCard(cardText: string) {
+    this.cards.push(cardText);
+  }
 }
