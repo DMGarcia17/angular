@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { AngularFireDatabase } from 'angularfire2/database';
+import {Observable} from 'rxjs';
+import { Card } from './models/card';
+import { CardService} from './card-service.service';
 
 @Component({
   selector: 'app-root',
@@ -7,20 +11,14 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ng-app';
-  public cards: Array<any> = [
-    {text: 'Card 1'},
-    {text: 'Card 2'},
-    {text: 'Card 3'},
-    {text: 'Card 4'},
-    {text: 'Card 5'},
-    {text: 'Card 6'},
-    {text: 'Card 7'},
-    {text: 'Card 8'},
-    {text: 'Card 9'},
-    {text: 'Card 10'}
-  ];
+  public cards$: Observable<Card[]>;
+
 
   public addCard(cardText: string) {
-    this.cards.push(cardText);
+    this.cardService.createCard(new Card(cardText));
+  }
+
+  constructor(private cardService: CardService) {
+    this.cards$ = this.cardService.getCardList();
   }
 }

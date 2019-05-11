@@ -10,27 +10,28 @@ import { takeWhile, debounceTime, filter } from 'rxjs/operators';
   host: {class: 'col-4'}
 })
 export class NewCardInputComponent implements OnInit {
-  public newCard: any = {text: ''};
-  public newCardForm: FormGroup;
-  @Output() onCardAdd = new EventEmitter<string>();
-  @ViewChild('form') public form: NgForm;
+public newCard: any = {text: ''};
+public newCardForm: FormGroup;
+private alive = true;
+@Output() onCardAdd = new EventEmitter<string>();
+@ViewChild('form') public form: NgForm;
 
   constructor(fb: FormBuilder) {
+    this.newCardForm = fb.group({
+      'text': ['', Validators.compose([Validators.required, Validators.minLength(2)])],
+    });
     this.newCardForm.valueChanges.pipe(
-      filter((value) => this.newCardForm.valid),
+          filter((value) => this.newCardForm.valid),
       debounceTime(500),
       takeWhile(() => this.alive)
     ).subscribe(data => {
       console.log(data);
     });
-    this.newCardForm = fb.group({
-      'text': ['', Validators.compose([Validators.required, Validators.minLength(2)])],
-    });
   }
 
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.code === 'Enter' && this.form.valid) {
+    if (event.code === 'Enter' && this.newCardForm.valid) {
       this.addCard(this.newCardForm.controls['text'].value);
     }
   }
